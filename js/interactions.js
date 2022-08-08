@@ -10,7 +10,9 @@ function onPlayerAttackingEnemy() {
   })
 
   if (player.isAttacking && isColliding) {
-    console.log("attacking")
+    enemy.health -= 20
     player.isAttacking = false
+
+    enemyHealthBarElement.style.width = enemy.health + "%"
   }
 }

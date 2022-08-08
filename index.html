@@ -17,9 +17,15 @@
   <body>
     <main>
       <div class="game-ui">
-        <div class="health-bar"></div>
-        <div class="timer"></div>
-        <div id="enemyHealthBar" class="health-bar"></div>
+        <div class="health-bar">
+          <div id="playerHealthBar" class="health-bar-hp"></div>
+          <div class="health-bar-bg"></div>
+        </div>
+        <div id="timer" class="timer"></div>
+        <div class="health-bar">
+          <div class="health-bar-bg"></div>
+          <div id="enemyHealthBar" class="health-bar-hp right"></div>
+        </div>
       </div>
       <canvas></canvas>
     </main>

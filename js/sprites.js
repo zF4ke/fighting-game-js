@@ -17,11 +17,12 @@ class Sprite {
         x: 0,
         y: 0,
       },
-      width: 100 - this.width / 2.5,
+      width: 110 - this.width / 2.5,
       height: 50,
     }
     this.isAttacking
     this.facing = facing
+    this.health = 100
   }
 
   draw() {
@@ -29,15 +30,15 @@ class Sprite {
     ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
 
     //attack box
-    //if (this.isAttacking) {
-    ctx.fillStyle = "red"
-    ctx.fillRect(
-      this.attackBox.position.x,
-      this.attackBox.position.y,
-      this.attackBox.width,
-      this.attackBox.height
-    )
-    //}
+    if (this.isAttacking) {
+      ctx.fillStyle = "red"
+      ctx.fillRect(
+        this.attackBox.position.x,
+        this.attackBox.position.y,
+        this.attackBox.width,
+        this.attackBox.height
+      )
+    }
   }
 
   update() {
@@ -107,7 +108,7 @@ const player = new Sprite({
 
 const enemy = new Sprite({
   position: {
-    x: 924,
+    x: 487,
     y: 100,
   },
   velocity: {

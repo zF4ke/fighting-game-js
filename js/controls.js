@@ -34,6 +34,7 @@ window.addEventListener("keydown", (e) => {
       keys.w.pressed = true
 
       break
+    case "z":
     case " ":
       keys.space.pressed = true
       break
@@ -74,21 +75,21 @@ function handleControls() {
     // Left
 
     if (keys.a.pressed && ["a", "ArrowLeft"].includes(player.lastKeyPressed)) {
-      player.velocity.x = -4
+      player.velocity.x = -6
       player.facing = "left"
     }
 
     // Right
 
     if (keys.d.pressed && ["d", "ArrowRight"].includes(player.lastKeyPressed)) {
-      player.velocity.x = 4
+      player.velocity.x = 6
       player.facing = "right"
     }
 
     // Jump
 
     if (keys.w.pressed) {
-      player.velocity.y = -10
+      player.velocity.y = -12
     }
   }
 

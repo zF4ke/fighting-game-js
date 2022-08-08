@@ -1,6 +1,10 @@
 const canvas = document.querySelector("canvas")
 const ctx = canvas.getContext("2d")
 
+const playerHealthBarElement = document.querySelector("#playerHealthBar")
+const enemyHealthBarElement = document.querySelector("#enemyHealthBar")
+const timerElement = document.querySelector("#timer")
+
 canvas.width = 1024
 canvas.height = 576
 
@@ -29,5 +33,5 @@ function animate() {
 
   prevTime = performance.now()
 
-  //console.log(`FPS: ${fps}`)
+  console.log(`FPS: ${fps}`)
 }
