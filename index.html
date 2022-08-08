@@ -10,9 +10,18 @@
 
     <script src="js/game.js" defer></script>
     <script src="js/sprites.js"></script>
-    <script src="js/input.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/collisions.js"></script>
+    <script src="js/interactions.js"></script>
   </head>
   <body>
-    <canvas></canvas>
+    <main>
+      <div class="game-ui">
+        <div class="health-bar"></div>
+        <div class="timer"></div>
+        <div id="enemyHealthBar" class="health-bar"></div>
+      </div>
+      <canvas></canvas>
+    </main>
   </body>
 </html>

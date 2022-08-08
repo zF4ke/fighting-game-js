@@ -7,3 +7,36 @@
 body {
     background-color: #1c1c1c;
 }
+
+main {
+    display: inline-block;
+
+    position: relative;
+}
+
+.game-ui {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    position: absolute;
+    width: 100%;
+    height: 20%;
+}
+
+.timer {
+    background-color: #ffcd35;
+
+    width: 10%;
+    height: 0;
+    padding-top: 10%;
+
+    flex-shrink: 0;
+}
+
+.health-bar {
+    background-color: #ff0000;
+
+    width: 100%;
+    height: 35%;
+}

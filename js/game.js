@@ -8,6 +8,8 @@ ctx.fillRect(0, 0, canvas.width, canvas.height)
 
 let prevTime = 0
 
+animate()
+
 function animate() {
   window.requestAnimationFrame(animate)
 
@@ -15,8 +17,10 @@ function animate() {
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
   player.update()
+  enemy.update()
 
-  keyHandler()
+  handleControls()
+  handleInteractions()
 
   // FPS
 
@@ -27,5 +31,3 @@ function animate() {
 
   //console.log(`FPS: ${fps}`)
 }
-
-animate()
