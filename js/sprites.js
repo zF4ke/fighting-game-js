@@ -1,6 +1,25 @@
+const backgroundSpritePath = "../assets/background/placeholder.png"
 const gravity = 0.4
 
 class Sprite {
+  constructor({ position, imageSrc }) {
+    this.position = position
+    this.width = 50
+    this.height = 150
+    this.image = new Image()
+    this.image.src = imageSrc
+  }
+
+  draw() {
+    ctx.drawImage(this.image, this.position.x, this.position.y)
+  }
+
+  update() {
+    this.draw()
+  }
+}
+
+class Fighter /* extends Sprite */ {
   constructor({ position, velocity, color = "white", facing = "right" }) {
     this.position = position
     this.velocity = velocity
@@ -93,7 +112,15 @@ class Sprite {
   }
 }
 
-const player = new Sprite({
+const background = new Sprite({
+  position: {
+    x: 0,
+    y: 0,
+  },
+  imageSrc: backgroundSpritePath,
+})
+
+const player = new Fighter({
   position: {
     x: 50,
     y: 100,
@@ -106,7 +133,7 @@ const player = new Sprite({
   facing: "right",
 })
 
-const enemy = new Sprite({
+const enemy = new Fighter({
   position: {
     x: 487,
     y: 100,
