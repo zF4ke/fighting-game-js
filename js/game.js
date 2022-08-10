@@ -1,12 +1,15 @@
 const canvas = document.querySelector("canvas")
 const ctx = canvas.getContext("2d")
 
+const canvasWidth = 1024
+const canvasHeight = 576
+
 const playerHealthBarElement = document.querySelector("#playerHealthBar")
 const enemyHealthBarElement = document.querySelector("#enemyHealthBar")
 const timerElement = document.querySelector("#timer")
 
-canvas.width = 1024
-canvas.height = 576
+canvas.width = canvasWidth
+canvas.height = canvasHeight
 
 ctx.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -22,7 +25,7 @@ function animate() {
 
   background.update()
   player.update()
-  enemy.update()
+  //enemy.update()
 
   handleControls()
   handleInteractions()
@@ -34,5 +37,5 @@ function animate() {
 
   prevTime = performance.now()
 
-  console.log(`FPS: ${fps}`)
+  //console.log(`FPS: ${fps}`)
 }

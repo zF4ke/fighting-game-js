@@ -1,31 +1,64 @@
 const backgroundSpritePath = "../assets/background/placeholder.png"
+const defaultBlockSpritePath = "../assets/colors/black.png"
 const gravity = 0.4
 
 class Sprite {
-  constructor({ position, imageSrc }) {
+  constructor({ position, imageSrc, scale = 1, framesMax = 1 }) {
     this.position = position
-    this.width = 50
-    this.height = 150
     this.image = new Image()
-    this.image.src = imageSrc
+    this.image.src = imageSrc   
+    this.width = this.image.width
+    this.height = this.image.height
+    this.scale = scale
+    this.framesMax = framesMax
+    this.frameCurrent = 0
+    this.framesElapsed = 0
+    this.framesHold = 7
   }
 
   draw() {
-    ctx.drawImage(this.image, this.position.x, this.position.y)
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(
+      this.image, 
+      this.frameCurrent * (this.image.width/this.framesMax),
+      0,
+      this.image.width/this.framesMax,
+      this.image.height,
+      this.position.x, 
+      this.position.y, 
+      (this.image.width/this.framesMax)*this.scale, 
+      this.image.height*this.scale
+    )
+
+  }
+
+  animate() {
+    this.framesElapsed++
+
+    if (this.framesElapsed % this.framesHold === 0) {
+      if (this.frameCurrent < this.framesMax-1) {
+        this.frameCurrent++
+      } else {
+        this.frameCurrent = 0
+      }
+    }
   }
 
   update() {
     this.draw()
+    this.animate()
   }
 }
 
-class Fighter /* extends Sprite */ {
-  constructor({ position, velocity, color = "white", facing = "right" }) {
-    this.position = position
-    this.velocity = velocity
-    this.width = 50
-    this.height = 150
-    this.color = color
+class Fighter extends Sprite {
+  constructor({ position, velocity, facing = "right", imageSrc, scale = 1, framesMax = 1, framesHold = 7 }) {
+    super({
+      position, imageSrc, scale, framesMax
+    })
+
+    this.velocity = velocity  
+    this.width = this.image.width
+    this.height = this.image.height
     this.lastKeyPressed
     this.attackBox = {
       position: {
@@ -40,24 +73,27 @@ class Fighter /* extends Sprite */ {
       height: 50,
     }
     this.isAttacking
+    this.onGround
     this.facing = facing
     this.health = 100
+    this.frameCurrent = 0
+    this.framesElapsed = 0
+    this.framesHold = 7
   }
 
-  draw() {
-    ctx.fillStyle = this.color
-    ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
-
-    //attack box
-    if (this.isAttacking) {
-      ctx.fillStyle = "red"
-      ctx.fillRect(
-        this.attackBox.position.x,
-        this.attackBox.position.y,
-        this.attackBox.width,
-        this.attackBox.height
-      )
+  fix_collision() {
+    let nextPosition = {
+      x: this.position.x + this.width*this.scale + this.velocity.x,
+      y: this.position.y + this.height*this.scale + this.velocity.y,
     }
+
+    if (nextPosition.y >= canvas.height) {
+      this.velocity.y = canvas.height - (this.position.y + this.height*this.scale)
+
+      return true
+    }
+
+    return false
   }
 
   update() {
@@ -82,21 +118,15 @@ class Fighter /* extends Sprite */ {
 
     // Physics
 
-    let nextPosition = {
-      x: this.position.x + this.width + this.velocity.x,
-      y: this.position.y + this.height + this.velocity.y,
-    }
-
-    if (nextPosition.y >= canvas.height) {
-      this.velocity.y = canvas.height - (this.position.y + this.height)
-    } else {
+    if (!this.fix_collision()) {
       this.velocity.y += gravity
     }
 
     this.position.y += this.velocity.y
     this.position.x += this.velocity.x
-
+ 
     this.draw()
+    this.animate()
   }
 
   attack(type) {
@@ -112,28 +142,41 @@ class Fighter /* extends Sprite */ {
   }
 }
 
+/* class Block extends Sprite {
+  constructor({ position, dimensions, imageSrc, color = "black" }) {
+    super({ position, dimensions, imageSrc, color })
+  }
+} */
+
 const background = new Sprite({
   position: {
     x: 0,
     y: 0,
+  },
+  dimensions: {
+    width: 0,
+    height: 0,
   },
   imageSrc: backgroundSpritePath,
 })
 
 const player = new Fighter({
   position: {
-    x: 50,
+    x: 200,
     y: 100,
   },
   velocity: {
     x: 0,
     y: 0,
   },
-  color: "white",
   facing: "right",
+  imageSrc: "../assets/player/idle.png",
+  scale: 7,
+  framesMax: 11,
+  framesHold: 5,
 })
 
-const enemy = new Fighter({
+/* const enemy = new Fighter({
   position: {
     x: 487,
     y: 100,
@@ -142,6 +185,6 @@ const enemy = new Fighter({
     x: 0,
     y: 0,
   },
-  color: "purple",
   facing: "left",
 })
+ */
