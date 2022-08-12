@@ -26,6 +26,7 @@ function animate() {
   background.update()
   player.update()
   //enemy.update()
+  block.update()
 
   handleControls()
   handleInteractions()

@@ -11,6 +11,9 @@ const keys = {
   space: {
     pressed: false,
   },
+  shift: {
+    pressed: false,
+  }
 }
 
 window.addEventListener("keydown", (e) => {
@@ -38,6 +41,10 @@ window.addEventListener("keydown", (e) => {
     case " ":
       keys.space.pressed = true
       break
+    case "Shift":
+      keys.shift.pressed = true
+
+      break
   }
 
   e.preventDefault()
@@ -62,6 +69,10 @@ window.addEventListener("keyup", (e) => {
       keys.w.pressed = false
 
       break
+    case "Shift":
+      keys.shift.pressed = false
+
+      break
   }
 })
 
@@ -71,25 +82,36 @@ function handleControls() {
 
   function movement() {
     player.velocity.x = 0
+    player.action = "idle"
 
     // Left
 
     if (keys.a.pressed && ["a", "ArrowLeft"].includes(player.lastKeyPressed)) {
-      player.velocity.x = -6
+      player.velocity.x = -3
       player.facing = "left"
+      player.action = "walking"
     }
 
     // Right
 
     if (keys.d.pressed && ["d", "ArrowRight"].includes(player.lastKeyPressed)) {
-      player.velocity.x = 6
+      player.velocity.x = 3
       player.facing = "right"
+      player.action = "walking"
+    }
+
+    // Sprint
+
+    if (keys.shift.pressed && player.action === "walking") {
+      player.velocity.x *= 2.7
+      player.action = "running"
     }
 
     // Jump
 
     if (keys.w.pressed) {
       player.velocity.y = -12
+      player.action = "jumping"
     }
   }
 

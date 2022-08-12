@@ -3,7 +3,7 @@ const defaultBlockSpritePath = "../assets/colors/black.png"
 const gravity = 0.4
 
 class Sprite {
-  constructor({ position, imageSrc, scale = 1, framesMax = 1 }) {
+  constructor({ position, imageSrc, scale = 1, framesMax = 1, offset = {x: 0, y: 0} }) {
     this.position = position
     this.image = new Image()
     this.image.src = imageSrc   
@@ -14,6 +14,7 @@ class Sprite {
     this.frameCurrent = 0
     this.framesElapsed = 0
     this.framesHold = 7
+    this.offset = offset
   }
 
   draw() {
@@ -24,12 +25,11 @@ class Sprite {
       0,
       this.image.width/this.framesMax,
       this.image.height,
-      this.position.x, 
-      this.position.y, 
+      this.position.x - this.offset.x, 
+      this.position.y - this.offset.y, 
       (this.image.width/this.framesMax)*this.scale, 
       this.image.height*this.scale
     )
-
   }
 
   animate() {
@@ -51,9 +51,22 @@ class Sprite {
 }
 
 class Fighter extends Sprite {
-  constructor({ position, velocity, facing = "right", imageSrc, scale = 1, framesMax = 1, framesHold = 7 }) {
+  constructor({ 
+    position, 
+    velocity, 
+    facing = "right", 
+    imageSrc, 
+    scale = 1, 
+    framesMax = 1, 
+    sprites,
+    offset = {x: 0, y: 0}
+  }) {
     super({
-      position, imageSrc, scale, framesMax
+      position,
+      imageSrc,
+      scale,
+      framesMax,
+      offset
     })
 
     this.velocity = velocity  
@@ -73,12 +86,23 @@ class Fighter extends Sprite {
       height: 50,
     }
     this.isAttacking
-    this.onGround
     this.facing = facing
     this.health = 100
     this.frameCurrent = 0
     this.framesElapsed = 0
     this.framesHold = 7
+    this.action = "idle"
+    this.sprites = sprites
+    this.offset = offset
+
+    for (const sprite in this.sprites) { 
+      sprites[sprite].image = new Image()
+      sprites[sprite].image.src = sprites[sprite].imageSrcRight
+      sprites[sprite].imageRight = new Image()
+      sprites[sprite].imageRight.src = sprites[sprite].imageSrcRight
+      sprites[sprite].imageLeft = new Image()
+      sprites[sprite].imageLeft.src = sprites[sprite].imageSrcLeft
+    }
   }
 
   fix_collision() {
@@ -87,13 +111,60 @@ class Fighter extends Sprite {
       y: this.position.y + this.height*this.scale + this.velocity.y,
     }
 
-    if (nextPosition.y >= canvas.height) {
-      this.velocity.y = canvas.height - (this.position.y + this.height*this.scale)
+    if (nextPosition.y >= canvas.height-100) {
+      this.velocity.y = canvas.height - (this.position.y + this.height*this.scale)-100
 
       return true
     }
 
     return false
+  }
+
+  handle_sprites() {
+    switch (this.action) {
+      case "idle":
+      default:
+        this.offset.x = 0
+        this.offset.y = -4
+
+        break
+      case "walking":
+        this.offset.x = 0
+        this.offset.y = 0
+
+        break
+      case "jumping":
+        this.offset.x = 0
+        this.offset.y = 0
+
+        break
+      case "running":
+        this.offset.x = 0
+        this.offset.y = -15
+
+        break
+    }
+
+    this.image = this.sprites[this.action].image
+    this.facing === "left" ? this.image = this.sprites[this.action].imageLeft : this.image = this.sprites[this.action].imageRight
+    this.framesMax = this.sprites[this.action].framesMax
+    this.framesHold = this.sprites[this.action].framesHold
+    this.width = this.image.width/this.framesMax * this.scale
+    this.width = this.image.height * this.scale
+  }
+
+  draw() {
+    ctx.drawImage(
+      this.image, 
+      this.frameCurrent * (this.image.width/this.framesMax),
+      0,
+      this.image.width/this.framesMax,
+      this.image.height,
+      this.position.x - this.offset.x, 
+      this.position.y - this.offset.y, 
+      (this.image.width/this.framesMax)*this.scale, 
+      this.image.height*this.scale
+    )
   }
 
   update() {
@@ -127,6 +198,7 @@ class Fighter extends Sprite {
  
     this.draw()
     this.animate()
+    this.handle_sprites()
   }
 
   attack(type) {
@@ -142,11 +214,33 @@ class Fighter extends Sprite {
   }
 }
 
-/* class Block extends Sprite {
-  constructor({ position, dimensions, imageSrc, color = "black" }) {
-    super({ position, dimensions, imageSrc, color })
+class Block {
+  constructor({ position, dimensions, color }) {
+    this.position = position
+    this.width = dimensions.width
+    this.height = dimensions.height
+    this.color = color
   }
-} */
+
+  collision() {
+    // rigidbody collision between player and block
+    console.log(`${player.position.x}+${player.width} (${player.position.x + player.width}) > ${this.position.x}`)
+
+    if (player.position.x + player.width > this.position.x) {
+      console.log("dentro")
+    }
+  }
+
+  draw() {
+    ctx.fillStyle = this.color
+    ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
+  }
+
+  update() {
+    this.draw()
+    this.collision()
+  }
+}
 
 const background = new Sprite({
   position: {
@@ -160,6 +254,18 @@ const background = new Sprite({
   imageSrc: backgroundSpritePath,
 })
 
+const block = new Block({
+  position: {
+    x: 330,
+    y: 384,
+  },
+  dimensions: {
+    width: 96,
+    height: 96,
+  },
+  color: "blue",
+})
+
 const player = new Fighter({
   position: {
     x: 200,
@@ -171,9 +277,33 @@ const player = new Fighter({
   },
   facing: "right",
   imageSrc: "../assets/player/idle.png",
-  scale: 7,
-  framesMax: 11,
-  framesHold: 5,
+  scale: 4,
+  sprites: {
+    idle: {
+      imageSrcRight: "../assets/player/idle.png",
+      imageSrcLeft: "../assets/player/idleFlipped.png",
+      framesMax: 11,        
+      framesHold: 7,
+    },
+    walking: {
+      imageSrcRight: "../assets/player/walking.png",
+      imageSrcLeft: "../assets/player/walkingFlipped.png",
+      framesMax: 8,    
+      framesHold: 5,
+    },
+    jumping: {
+      imageSrcRight: "../assets/player/jumping.png",
+      imageSrcLeft: "../assets/player/jumpingFlipped.png",
+      framesMax: 4,    
+      framesHold: 5,
+    },
+    running: {
+      imageSrcRight: "../assets/player/running.png",
+      imageSrcLeft: "../assets/player/runningFlipped.png",
+      framesMax: 10,    
+      framesHold: 5,
+    }
+  }
 })
 
 /* const enemy = new Fighter({
