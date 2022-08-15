@@ -150,7 +150,7 @@ class Fighter extends Sprite {
     this.framesMax = this.sprites[this.action].framesMax
     this.framesHold = this.sprites[this.action].framesHold
     this.width = this.image.width/this.framesMax * this.scale
-    this.width = this.image.height * this.scale
+    this.height = this.image.height * this.scale
   }
 
   draw() {

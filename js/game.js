@@ -11,7 +11,7 @@ const timerElement = document.querySelector("#timer")
 canvas.width = canvasWidth
 canvas.height = canvasHeight
 
-ctx.fillRect(0, 0, canvas.width, canvas.height)
+//ctx.fillRect(0, 0, canvas.width, canvas.height)
 
 let prevTime = 0
 
